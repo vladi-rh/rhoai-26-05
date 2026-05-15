@@ -1,0 +1,21 @@
+site:
+  title: Introduction to RHOAI 
+  url: https://vladi-rh.github.io/rhoai-26-05/
+  start_page: modules::01_welcome.adoc
+
+ui:
+  bundle:
+    url: ./content/docs-ui/ui-bundle.zip
+  supplemental_files: ./content/supplemental-ui
+
+content:
+  edit_url: 'https://vladi-rh.github.io/rhoai-26-05/edit/main/{path}'
+  sources:
+    - url: ./
+      start_path: content
+      
+output:
+  dir: ./content/www
+
+runtime:
+  cache_dir: ./content/.cache/antora
