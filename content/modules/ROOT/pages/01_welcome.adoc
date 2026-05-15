@@ -1,0 +1,11 @@
+# Introduction to Red Hat OpenShift AI (RHOAI) 
+
+Welcome to the Introduction to Red Hat OpenShift AI (RHOAI)!
+This lab is designed to provide a hands-on experience with the RHOAI a platform for workloads with AI/ML capabilities.
+
+Once you access the RHOAI environment, we will dive deeper into some common use cases:
+
+* Training a ML model 
+* Using https://en.wikipedia.org/wiki/Amazon_S3[S3 compatible] storage to save the newly trained model
+* Serving the model using a custom inference engine
+* Using data science pipelines
