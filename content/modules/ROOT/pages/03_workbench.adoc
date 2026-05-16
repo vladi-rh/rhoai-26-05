@@ -1,0 +1,144 @@
+# Workbenches
+
+A workbench is an isolated area where you can examine and work with ML models. You can also work with data and run programs, e.g. to prepare and clean data. While a workbench is not required if you only want to service an existing model, one is needed for most data science workflow tasks, such as writing code to process data or training a model.
+
+When you create a workbench, you specify an image which includes an IDE, packages, and other dependencies. You can also configure connections, cluster storage and add container storage. 
+
+Supported IDEs currenly include JupyterLab, code-server, and RStudio (Technology Preview).
+
+The IDEs are based on a server-client architecture. Each IDE provides a server that runs in a container on the OpenShift cluster, while the user interface (the client) is displayed in your web browser. For example, the Jupyter workbench runs in a container on the Red Hat OpenShift cluster. The client is the JupyterLab interface that opens in your web browser on your local computer. All of the commands that you enter in JupyterLab are executed by the workbench. 
+
+Within a project, you can create multiple workbenches. When to create a new workbench depends on considerations, such as the following:
+
+* The workbench configuration (e.g. CPU, RAM, or IDE). If you want to avoid editing the configuration of an existing workbench’s configuration to accommodate a new task, you can create a new workbench instead.
+* Separation of tasks or activities. For example, you might want to use one workbench for your Large Language Models (LLM) experimentation activities, another workbench dedicated to a demo, and another workbench for testing.
+
+A workbench image is preinstalled with tools and libraries for model development. You can use the provided images, or an OpenShift AI administrator can create custom images tailored to your needs. Following is the list of some workbench images provided by default on Red Hat Openshift AI:
+
+* CUDA
+* Standard Data Science
+* TensorFlow
+* PyTorch 
+* ...
+
+## Create a new workbench
+
+Let's create a new workbench for our exerise by following these steps:
+
+. From the RHOAI dashboard select the `userX-workshop` AI project that was already created for you.
+. Either from the `Overview` or from `Workbenches` page click `Create a workbench` button:
++
+[.bordershadow]
+image::03_workbench_new.png[] 
+. Give your workbench a name and description
++
+You will notice available properties grouped by sections, so let's go quickly over these.
+. Choose `Jupyter | Data Science | CPU | Python 3.12` fom the list of images
+. Leave the version with already selected `2025.2` and check the prepared packages
++
+[.bordershadow]
+image::03_workbench_packages.png[]
++
+Leave the hardware profile with `default-profile` value
++
+Make sure that requests and limits in the `customize resource` section are according to your needs
++
+[.bordershadow]
+image::03_workbench_resources.png[]
+. We have option to add environment variables, but for now we will leave our workbench without it
+. In a cluster storage section by default there will be created ReadWriteOnce storage and we can leave defaults
++
+In case we need, we could still change some of the storage parameters:
++
+[.bordershadow]
+image::03_workbench_storage_edit.png[] 
+. In connections section, choose _Attach existing connection_ and choose already prepared `models` connection
++
+[.bordershadow]
+image::03_workbench_connections.png[]
++
+[NOTE]
+====
+Users can create new connection of different types (e.g. OCI compliant registry, S3 compatible object storage, URI), but in the exercise we will take advantage of connections that the administrator already prepared for us.   
+====
+
+Finally, let's confirm by clicking `Create workbench`.
+This configuration will be enough for now, as we can always come back later if we need to change some properties.
+
+As you will notice on the `Workbenches` page of the project where it was created, the workbench will automatically start.
+[.bordershadow]
+image::03_workbench_starting1.png[]
+image::03_workbench_starting2.png[]
+and we can see the all intermediate phases
+[.bordershadow]
+image::03_workbench_status.png[] 
+until it starts and its status change to `Running`.
+
+What happens in the background automatically, is that the new custom resource of the type `Notebook` is created, OpenShift tries to create new pod, pulls required image, until pod (therefore our workbench) is finally up and running. 
+
+If you are curious how this new resource looks like you can always check it from the terminal:
+[.console-input]
+[source,bash]
+----
+oc project userX-workshop # change the context to your project
+oc get notebook test-wb -oyaml | yq -r .status
+oc get notebook test-wb -oyaml | yq -r .spec
+oc get pods -n userX-workshop
+----
+
+From the same page, we can stop the workbench, change some of the its parameters using (⋮) menu options, or delete it. 
+
+Let's try to use it in the next section. 
+
+## Explore the environment in the workbench
+
+### Run Python in the notebook
+
+Notice that in the front of the the newly created workbench name, there is a `>`, that when clicked unfolds more details about the workbench and allow to get a quick insight of the used storage, resources or packages. 
+[.bordershadow]
+image::03_workbench_running_details.png[]
+
+The name of a workbench is actually a link, that when clicked can give us access to the JupyterLab envionment, which will open in the new browser page:
+[.bordershadow]
+image::03_jupyterlab_launcher.png[]
+
+On a `Launcher` tab, we could start a terminal or a actual new Notebook with Python environment provided in the image. 
+
+Let's open that `Python 3.12` notebook and try some basic commands.
+
+As soon, as `Untitled.ipynb` is opened, we can start typing in cells. 
+Just to get a minimal feeling of use basic example from below and paste it in the cell.
+[.console-input]
+[source,bash]
+----
+import time
+time.sleep(5) # bad sleeping example
+print("Hello world")
+----
+Press SHIFT+Enter on the keyboard while being in the cell, to execute its contenxt and move to the next one.
+
+While this was running for 5 seconds you could notice that the Python Kernel status in the upper-right corner changed to `busy` and turned gray
+[.bordershadow]
+image::03_jupyterlab_busy.png[]
+until the cell execution completed and status changes back to `idle`.
+[.bordershadow]
+image::03_jupyterlab_idle.png[]
+
+Additinally, you would notice similar gray cirle next to the notebook name, whenever you make changes until you save them.
+
+This indications will definetly be useful when running longer tasks ⏳ or checking if notebook changes are actually saved 🪲 ...
+
+### Files, Git usage in the JupyterLab environment 
+
+Notice the top menu bar and menu with the icons on the left.
+
+The most freqently used among these are `File Browser` and `Git` although the other are pretty useful. 
++
+Terminal can be started from Luncher too. Don't forget it, we will need most of these pretty soon 🧐
+[.bordershadow]
+image::03_jupyterlab_files.png[]
+image::03_jupyterlab_git_terminal.png[]
+
+Let's move to some real examples in the next section.
+
+

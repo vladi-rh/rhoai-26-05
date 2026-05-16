@@ -1,0 +1,85 @@
+# Red Hat OpenShift AI Dashboard
+
+In this exercise we will explore the OpenShift AI dashboard 🧭 🏁
+
+Let's login to your OpenShift cluster as a specific user (e.g. _user20_) and click the application launcher.
+Than select the link to the Red Hat OpenShift AI (find this menu in the upper right corner of the web console).
+[.bordershadow]
+image::02_WebConsole_link.png[]
+
+You will use the same credentials to login to the OpenShift AI dashboard and after successful login land on a home page of RHOAI.
+
+To verify the version of RHOAI that you are using, click on a `?` icon in the upper right corner and choose `About` from the menu. 
+
+After confirming you are running RHOAI v3.3.2 you can close the dialog ✅ 
+
+## AI Project
+
+To implement a data science workflow we need a project. As you can see on the home page, the workshop project was already created for you.
+
+Let's create new project by clicking on the `Create project` link, fill the `Name` and `Description` with the text of your choice and confirm with the `Create` button.
+
+Choose `Projects` menu item from the left menu, to see all AI projects that are available to you:
+[.bordershadow]
+image::02_RHOAI_3.3_menu.png[]
+
+At this stage you should be seeing 2 projects.
+
+[NOTE]
+====
+In Openshift, a project is a Kubernetes namespace with additional annotations and it's used to manage user access to resources. This way we can have organized data science work in one place and if needed we can collaborate with others. 
+====
+
+Notice the dots menu (⋮) on the right-end of the each available project. 
+
+From that menu, choose `Edit project` to change the name of just created project, than confirm by clicking `Update`. 
+You should be able to see renamed project in the list ✅ 
+
+Let's click the small `?` icon next to the project name you just changed. 
+Wait a second?! 🤔 You just renamed the project, right? 
+Is the `Resource name` also renamed? 
+
+Check it from the command line while being logged to the cluster using:
+[.console-input]
+[source,bash]
+----
+oc get namespace my-project -oyaml | grep 'name:'
+----
+Hmm, it seems like `display-name` is not the same as the `name` 💡 
++
+It's good to know, that once created, the namespace resource name will remain.
+
+[TIP]
+====
+Typically, we would not want the _"regular"_ projects to appear in the RHOAI dashboard. 
+
+To achieve this, RHOAI adds additional label to the AI projects and therefore shows just projects (namespace) with a `opendatahub.io/dashboard: 'true'` label in a OpenShift AI dashboard.  
+
+Use following snippet to check your project
+[.console-input]
+[source,bash]
+----
+oc describe namespace my-project
+----
+and check if the label is present or not. 
+====
+
+Ok, let's move on by selecting the project that was already created for your user with a workshop suffix (e.g. _user20-workshop_). 
++
+You will see the project overview page, which gives you basic information about it. 
+
+Notice the menu on the top of this page:
+[.bordershadow]
+image::03_AI_DS_project_overview.png[]
+
+As you can see, most of the tabs you can now select, are still empty, but soon we will see more details on these pages. 
+
+Within a project, we can add following fuctionality:
+
+. *Connections* - for accesing data without having to hardcode endpoints or credentials
+. *Workbenches* - for working with and processing data, developing models
+. *Deployed models* - for testing and integrating these into applications
+. *Pipelies* - for automating ML workflows
+. *Permissions* - for setting users and groups that can access selected project (currently just your user)
+
+Let's go to the next session, where we will get to know the rest of the RHOAI functionalities.
