@@ -7,7 +7,7 @@ For example, the steps in a machine learning workflow might include items such a
 In RHOAI, we can use two types of pipelines:
 
 * Elyra pipelines in the JupyterLab environment
-* Kubeflow pipelines
+* Kubeflow pipelines (KFP)
 
 We will check both and compare a little bit later. First things first... 🏁
 
