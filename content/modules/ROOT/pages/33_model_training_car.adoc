@@ -1,29 +1,48 @@
-# Model Training with Custom Notebook
+# Model Training
 
-In this module you will sync a git repo, and then execute the logic contained in the parasol-insurance Jupyter notebooks. 
+In this module you will sync a git repo of a data science for a fictional insurance application (Parasol), and execute the logic contained in the Jupyter notebooks. 
 
-To perform this task, we will use the custom data science notebook image we created and uploaded in the previous module. 
+To perform this task, we will use the workbench/notebook image that we created in the previous module. 
 
 ## Steps to create workbench with a custom notebook
 
-. In RHOAI, navigate to the `parasol-insurance` data science project, and select the `Workbenches` tab
+. In Red Hat OpenShift AI dashboard, navigate to your user's `workshop` data science project (e.g. `user20-workshop`), and select the `Workbenches` tab
 
-. From the `Workbenches` tab, click on the `Open` button to open the workbench
-
-+
-[.bordershadow]
-image::01_custom_workbench.png[Custom Workbench]
-
-. Open Workbench and git clone parasol insuance repository https://github.com/rh-aiservices-bu/parasol-insurance.git
+. From the `Workbenches` tab, make sure that your workbench created in previous section is running and open it, so we can start playing with the code 🎮
 
 +
 [.bordershadow]
-image::Git_Clone_Parasol_Insurance.png[click on source code button and enter repo url]
+image::03_workbench_running.png[]
 
-. Navigate to `parasol-insurance/lab-materials/04` and run the notebooks 04-01-over-approach, 04-02-car-recognition, 04-03-model-retraining and 04-04-accident-recog.
+. Once in JupyterLab, click on a source code icon of File Browser menu or `Clone a Repository` button in Git and enter repo url to clone the `parasol-insuance` repository from https://github.com/rh-aiservices-bu/parasol-insurance.git
+
++
+[.bordershadow]
+image::Git_Clone_Parasol_Insurance.png[]
+
+. Navigate to `parasol-insurance/lab-materials/04` and run the following notebooks one by one:
+
+* 04-01-over-approach.ipynb,
+* 04-02-car-recognition.ipynb,
+* 04-03-model-retraining.ipynb,
+* 04-04-accident-recog.ipynb
+
+It is expected that you execute all the cells in each of the notebooks without errors. 
 
 [NOTE]
 ====
 This is an example on how a model gets created, in the following sections we will deploy a pre-trained model.
 ====
+
+The notebooks already contain some helpful notes.
+
+[HINT]
+====
+While executing `04-03-model-retraining.ipynb` there will be some cells that need a little bit more time to complete execution.
+
+During this time you can go quickly back to OpenShift web console and observe the Metrics of the workbench pod you are currently executing code in. 📈📉 Even if you missed opportuinty during execution let's check those quickly before moving on.
+
+Could you make any observations regarding these metrics ❓
+====
+
 
