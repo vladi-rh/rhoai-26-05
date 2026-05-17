@@ -1,0 +1,86 @@
+# ML / AI Pipelines
+
+As a data scientist, you can enhance your projects on OpenShift AI by building portable machine learning (ML) workflows with AI pipelines, using Docker containers. This enables you to standardize and automate machine learning workflows to enable you to develop and deploy your data science models.
+
+For example, the steps in a machine learning workflow might include items such as data extraction, data processing, feature extraction, model training, model validation, and model serving. Automating these activities enables your organization to develop a continuous process of retraining and updating a model based on newly received data. This can help address challenges related to building an integrated machine learning deployment and continuously operating it in production.
+
+In RHOAI, we can use two types of pipelines:
+
+* Elyra pipelines in the JupyterLab environment
+* Kubeflow pipelines
+
+We will check both and compare a little bit later. First things first... 🏁
+
+## Pipelines server
+
+To be able to use ML pipelines on RHOAI, first thing that needs to be done is to setup the pipelines server for the specific AI/DS project. +
+Luckily, the administrators already completed this task for us 🎁
+
+The data science pipelines server is a component of RHOAI that allows you to create, run, and monitor machine learning pipelines. +
+Configuring the pipelines server include where your pipeline artifacts and data are stored and it can be achieved either from the RHOAI Dashboard in the Pipeline section of your project, or via GitOps +
+[.bordershadow]
+image::07_pipelines_server_config.png[]
+
+As previously mentioned, this task for us is already completed, but let's take a look resource representing pipeline server looks like +
+[.console-input]
+[source,bash]
+----
+oc get DataSciencePipelinesApplication dspa -oyaml | yq .spec
+# or alternatively
+oc describe DataSciencePipelinesApplication dspa
+----
+
+It will look similar to this yaml snippet:
+
+[.console-input]
+[source,yaml]
+----
+apiServer:
+  cacheEnabled: true
+  deploy: true
+  enableOauth: true
+  enableSamplePipeline: false
+  pipelineStore: database
+database:
+  disableHealthCheck: false
+  mariaDB:
+    deploy: true
+    pipelineDBName: mlpipeline
+    pvcSize: 10Gi
+    username: mlpipeline
+dspVersion: v2
+objectStorage:
+  disableHealthCheck: false
+  enableExternalRoute: false
+  externalStorage:
+    basePath: ""
+    bucket: pipeline
+    host: minio-api-userX-workshop.apps.cluster-abc123.abc123.test.example.com
+    s3CredentialsSecret:
+      accessKey: AWS_ACCESS_KEY_ID
+      secretKey: AWS_SECRET_ACCESS_KEY
+      secretName: some-secret
+    scheme: https
+persistenceAgent:
+  deploy: true
+  numWorkers: 2
+podToPodTLS: true
+scheduledWorkflow:
+  cronScheduleTimezone: UTC
+  deploy: true
+----
+
+Notice the object storage configuration we saw earlier is already present, but in addition to that the admins enabled, deployed and configured the database (e.g. Maria DB), enabled caching and few other configurations.
+
+Ok, if pipeline server is ready like we expect, you should be seeing few pods in your `userX-workshop` project 
+[.console-input]
+[source,bash]
+----
+oc get pods | grep -E 'ds-pipeline|dspa'
+----
+
+On the RHOAI Dashboard, the pipeline section should look like following:
+[.bordershadow]
+image::07_pipelines_server_ready.png[]
+
+🙌 Let's move to the next section

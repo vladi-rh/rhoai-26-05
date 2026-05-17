@@ -8,7 +8,7 @@
     ** 6. xref:06_deploy_model.adoc[Deploy Model]
 
 * Data Science Pipelines
-    ** 7. xref:40_setup_pipeline_server.adoc[Setup Pipeline Server]
+    ** 7. xref:07_pipelines.adoc[Setup Pipeline Server]
     ** 8. xref:41_introduction_to_kfp_pipelines.adoc[KFP Pipelines]
     ** 9. xref:kfp_elyra_differences.adoc[Comparison between Elyra and KFP]
     ** 10. xref:introduction_to_elyra_pipelines.adoc[Elyra Pipelines]
