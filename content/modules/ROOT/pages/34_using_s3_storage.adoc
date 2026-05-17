@@ -19,7 +19,6 @@ For more information about S3 check:
 
 In this section we check the access and usage of the MinIO S3 storage in our OpenShift environment. 
 
-+
 Administrators of the cluster already deployed it, so let's check if we can access it:
 
 [.console-input]
@@ -33,7 +32,6 @@ Don't these buckets names remind you to *connections* you previously saw while c
 
 Talking about connections, did you know that you can see them in your AI project?
 
-+
 [.bordershadow]
 image::03_project_connections.png[]
 
@@ -59,8 +57,7 @@ Any intesting content there?
 
 Are there any annotations or labels that makes the secret a bit special to be displayed in a RHOAI dashboard? 💡
 
-Let us know what interesting findings you ended with. 
-
+Let us know what interesting findings you ended with 🕵️
 
 
 ## Explore S3 in a RHOAI Workbench
@@ -99,7 +96,7 @@ echo "https://$(oc get route minio-api -o json | jq -r .spec.host)"  # assuming 
 !pip install boto3 ultralytics
 ----
 
-. In a new cell, add and configure the connection to MinIO S3. Make sure to reference the S3 connection details.
+. In a new cell, add and configure the connection to our MinIO S3. Make sure to reference the S3 connection details.
 
 +
 
@@ -151,7 +148,7 @@ s3 = boto3.client(
 ----
 ====
 
-. Using the boto3.client variable from the previous step, define a function to list the current buckets in a new cell. Name this function `get_minio_buckets`
+. Using the `boto3.client` variable from the previous step, define a function to list the current buckets in a new cell. Name this function `get_minio_buckets`
 
 +
 
@@ -190,10 +187,10 @@ get_minio_buckets()
 +
 [NOTE]
 ====
-We currently have few buckets in the S3 storage created by administrators.
+We currently have few buckets in the S3 storage. These are created by administrators.
 ====
 
-. Using the boto3.client variable, create a function to create a new bucket in S3 storage in a new cell. Name it `create_minio_bucket` with `bucket_name` as an input parameter.
+. Using the `boto3.client` variable, create a function to create a new bucket in S3 storage in a new cell. Name it `create_minio_bucket` with `bucket_name` as an input parameter.
 
 +
 [.console-input]
@@ -225,7 +222,7 @@ def create_minio_bucket(bucket_name):
 ----
 ====
 
-. In a new cell, Use the fuctions that you just created to create 2 buckets: `models` and `pipelines`. Use the `get_minio_buckets` function you created to view the newly created buckets.
+. In a new cell, Use the fuctions that you just created to create additional buckets: `my-test` and `my-models`. Use the `get_minio_buckets` function you just created to view the newly created buckets.
 
 +
 .Solution
@@ -240,7 +237,7 @@ get_minio_buckets()
 ----
 ====
 
-. Using the boto3.client variable, create a function to upload a file to a bucket. This function should be named `upload_file` and should take 3 input parameters: `file_path`, `bucket_name`, and `object_name`.
+. Using the `boto3.client`` variable, create a function to upload a file to a bucket. This function should be named `upload_file` and should take 3 input parameters: `file_path`, `bucket_name`, and `object_name`.
 
 +
 .Solution
@@ -259,7 +256,7 @@ def upload_file(file_path, bucket_name, object_name):
 ----
 ====
 
-. Download the `accident_detect.onnx` model and upload the file to S3 storage under the `models` bucket. The onnx file should be stored under the path: `weights/accident_detect.onnx`. You can use this snippet to download the onnx model:
+. Download the `accident_detect.onnx` model and upload the file to S3 storage under the `my-models` bucket. The onnx file should be stored under the path: `models/1/accident_detect.onnx`. You can use this snippet to download the onnx model:
 
 +
 
@@ -282,7 +279,7 @@ model = YOLO("https://rhods-public.s3.amazonaws.com/demo-models/ic-models/accide
 from ultralytics import YOLO
 model = YOLO("https://rhods-public.s3.amazonaws.com/demo-models/ic-models/accident/accident_detect.onnx", task="detect")
 # Upload the file
-upload_file('weights/accident_detect.onnx', 'my-models', 'accident_model/accident_detect.onnx')
+upload_file('weights/accident_detect.onnx', 'my-models', 'accident_model/1/accident_detect.onnx')
 ----
 ====
 
