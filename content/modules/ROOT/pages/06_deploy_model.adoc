@@ -1,0 +1,142 @@
+# Model deployment 
+
+In this section we will deploy our model and serve it in our RHOAI instance. +
+The good practices suggest everything as code, but as we are just getting to know Openshift AI, we will use RHOAI dashboard to get familiar with it.
+
+Let's first take a look at RHOAI feature called *model catalog*. 
+
+## Model Catalog
+
+The model catalog provides a curated library where data scientist can discover and evaluate the available generative AI models to find the best fit for their use case. Models found here are from different providers and OpenShift AI administrators can configure available repository sources for models displayed in model catalog. Default model catalog provided by Openshift AI, includes models from providers such as Red Hat IBM, Meta, Nvidia, Mistra AI and Google. 
+
+In RHOAI dashboard, under `AI hub` group, select `Catalog` to check the models available in your model catalog:
+[.bordershadow]
+image::06_model_catalog.png[]
+
+[TIP]
+====
+You probably noticed that some of the models have a `validated` label.
+
+Validated models are benchmarked for performance and quality using leading open source evaluation datasets.
+====
+
+Selecting a model from this catalog opens details overview with description, license, tensor type and more details. +
+The `Performance insights` section offers key performance metrics when running selected model on a popular GPUs.
+
+Ok, let's move on to the actual deployment of *our* model.
+
+## Deployment 
+
+Let's make sure we are all on the same page: +
+On the RHOAI dashboards menu, select the `Deployments` in the `AI hub` group.
+
+Just under the `Deployments` title, you can see currently selected project. +
+Make sure that your workshop project is selected (e.g. `user20-workshop`) ☑️
+
+As currently there is no deployed model in your AI project, let's click the `Deploy model` button and fill the data in a few steps.
+
+In the `Model details` step, we need to provide basic information about model itself (where it is and which type of model we want to deploy). 
+
+The `Model location` can be provided in a different ways (e.g. OCI compliant registry, S3 object storage, etc..) +
+If we select S3 object storage, we need to enter all those details we learned about in previous exerise 🥴 too much typing of secrets for my taste...  
+[.bordershadow]
+image::06_model_location_s3.png[]
+
+Let's better take advantage of existing connection and fill the needed details as follows:
+
+* `Model location`: Existing connection
+* `Connection`: models (created by administrators)
+* `Path`: `accident_model/`
+
+It should look like this: +
+[.bordershadow]
+image::06_model_location_existing_conn.png[]
+
+There is one more missing parameter, namely `Model type`. +
+Select the *`Predictive model`* for this field and click next. 
+
+In the `Model deployment` step we need to provide several more details. +
+Some of these are self explanatory (e.g. Model deployment name, description, hardware profile, resources request and limits), while other need more attention. +
+Let's pay attention to the `Model framework` (name - version) list:
+[.bordershadow]
+image::06_model_format.png[]
+Note that possible options are various popular formats like `tensorflow``, `pytorch`, `sklearn`, `xgboost` with their respective versions. +
+We will select `ONNX` as we know from previous exercise, that is the format of our model.
+
+Another important choice is the `Serving runtime`. +
+As you can see, RHOAI already auto-selected the best runtime for given model type, format and the hardware profile and in our case the choice is `OpenVINO Model Server v2025.4`. +
+[.bordershadow]
+image::06_model_serving_runtime.png[]
+
+For our workshop, let's leave `number of replicas to deploy` at 1 and go to the next step.
+
+In the `Advanced settings` steps, we need to make sure model is available throught an external route. +
+For simplicity in this workshop (although not recommended for production) we will uncheck `Token authentication`. +
+Configuration parameters can remain as default, but it's useful to know how predefined arguments look like. +
+[.bordershadow]
+image::06_model_advanced_settings.png[]
+Deployment strategy can remain as `Rolling update` and we are ready to confirm our choices in the last step and finally deploy the model.
+
+Soon enough, we will see our model is getting `Started` status.
+[.bordershadow]
+image::06_model_running.png[]
+
+One important detail to know is how to consume the model 🤔 +
+This can be done via REST endpoints that are visible when clicking `Internal and external endpoint` link of our model deployement.
+[.bordershadow]
+image::06_model_endpoints.png[]
+
+In the background, OpenShift created few new resources, that you can check from terminal in your namespace using:
+[.console-input]
+[source,bash]
+----
+# inference pod
+oc get namespace <userX-workshop> -oyaml | grep '<your-model-deploy-name>'
+
+# Serving runtime resource
+oc get servingruntimes
+oc describe servingruntime <your-model-deploy-name>
+
+# Inference service resource
+oc get inferenceservice
+oc describe inferenceservice <your-model-deploy-name>
+
+# Route on which model is served via REST API
+oc get route <your-model-deploy-name>
+----
+
+As previously mentioned, RHOAI brings several serving runtimes out of the box. It also supports the ability to add your own serving runtime, in which case, it would be up to the users or administrators to configure, adjust and maintain your custom runtimes.
+
+The resources we just observed in OpenShift, can be stored as yaml files and used for GitOps deployments according to good practices ✨
+
+Let's test the serving of our model 🚀
+
+## Test the served model
+
+To test if the served model is working as expected, go back to RHOAI `userX-workshop` AI project and go to the _workbenches_ tab.
+
+Make sure you have a running workbench and navigate to previously cloned `parasol-insurance/lab-materials/04/` inside the workbench. +
+Open the `04-05-model-serving` notebook. We need to change the RestURL/infer_url value. We can get it from the model that we just deployed.
+
+Make sure to change the endpoint values in the notebook before testing +
+⚠️ notebook instructions need an update here, so let's make sure the RestURL looks like following (where`userX` is replaced with your username):
+[.console-input]
+[source,python]
+----
+RestURL = 'http://my-model-deploy-name-userX-workshop.apps.cluster-xyz.xyz.sandbox1234.abc.com'
+----
+
+[NOTE]
+====
+If the notebook was restarted since last time, you might need to run `!pip install ` commands to get the needed packages
+====
+
+Here is example of how updated notebook instructions should look like:
+[.bordershadow]
+image::06_model_serving_notebook_changes.png[]
+
+After making these changes, run the notebook; we should see an output to the image that we pass to the model.
+
+Voila 🎉 You completed basic model serving and inference with the power of OpenShift AI and containers 🚀🧑‍🚀🌌 
+
+Let's move from experiments 🔬🧪🧑‍🔬 to the next section 🧑‍🏭 

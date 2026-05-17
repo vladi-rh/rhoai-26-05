@@ -5,7 +5,7 @@
     ** 3. xref:03_workbench.adoc[Workbenches]
     ** 4. xref:33_model_training_car.adoc[Model Training]
     ** 5. xref:34_using_s3_storage.adoc[Using S3 Storage]
-    ** 6. xref:36_deploy_model.adoc[Deploy Model]
+    ** 6. xref:06_deploy_model.adoc[Deploy Model]
 
 * Data Science Pipelines
     ** 7. xref:40_setup_pipeline_server.adoc[Setup Pipeline Server]
