@@ -1,0 +1,91 @@
+# Introduction to Elyra Pipelines
+
+In this section, we learn about elyra pipelines. Elyra pipelines are a way to orchestrate and manage machine learning workflows. +
+They provide a structured approach to defining and executing tasks in a sequential manner. +
+Elyra pipelines can be created using a visual editor, making it easy for users to design and customize their workflows.
+
+## Elyra Runtime Configuration in Jupyter Notebooks
+
+In OpenShift AI, you can manage runtime configurations using the JupyterLab UI. 
+
+A runtime configuration provides Elyra access to the Data Science Pipelines backend for scalable pipeline execution.
+
+[WARNING] 
+The runtime configuration is included and is pre-configured for submitting pipelines to Data Science Pipelines *only when the pipeline server is created in the project before the workbench is created.*
+
+## Create a pipeline using Elyra pipeline editor
+
+. Click on `Pipeline Editor` and create a new pipeline. Name the pipeline as `accident_4_elyra.pipeline`
++
+
+[.bordershadow]
+image::07_pipelines_elyra_editor.png[] 
+
++ 
+
+. Drag and drop the notebook `04-05-model-serving.ipynb`, we were working on, into the pipeline editor. 
++
+
+[.bordershadow]
+image::07_pipelines_accident_4_elyra.png[] 
+
+. Right click on this single node and select `Open properties`.
+
++
+
+. In case of the `Runtime image required` error, select the node and set the mandatory parameter `Runtime image` to _"Data Science - Python 3.12"_ for both nodes.
++
+[.bordershadow]
+image::07_pipelines_elyra_runtime_missing_1node.png[] 
+
++
+
+. Update the pipeline parameters for the node:
+
+* Set CPU requests/limits to 2/4
+* Set Memory requests/limits to 4/8
+
+and move to `File dependencies` section as our node depends on few files, so we need to update them as well. +
+Final node configuration should look like:
+
++
+[.bordershadow]
+image::07_pipelines_elyra_1node_config.png[]
++
+
+Although having just a single node, technically it is our first Elyra pipeline. +
+Let's run 🏃‍➡️🏃‍➡️🏃‍➡️ 
+
+. Click on `Run Pipeline` icon from the menu of your pipeline file. +
+After confirming in a `Run Pipelines for Pipeline` dialog, we will get a confirmation of submission to the pipeline server with a link to our pipeline.
+
++
+[.bordershadow]
+image::07_pipelines_run_job_submission.png[]
+
+Clicking the link will bring us to the actual run of submitted pipeline on the RHOAI dashboard, where we can see the details, as well as list of all runs. 
+
++
+[.bordershadow]
+image::07_pipelines_elyra_run_success.png[]
+
+If we check back in OpenShift (console or the terminal), we will see that pipeline in the background created few pods to execute it's tasks in a cloud native way. 
+
+### Pipeline execution
+
+Elyra is now converting your pipeline definition into a YAML representation and sending it to the Data Science Pipelines backend. After a few seconds, you should see confirmation that the pipeline has been successfully submitted.
+
+To monitor the pipeline's execution, click on the `_Run Details_` link, which takes you to the pipeline run view within the RHOAI dashboard. Here you can track in real-time how each pipeline task is processed and whether it fails or resolves successfully.
+
+To confirm that the pipeline has indeed produced fraud detection scoring results, view the content of the pipeline storage bucket. In the folder, there will be HTML files that show the status of each of the task executions.
+
+Navigate back to the `Experiment and Runs` overview in the RHOAI dashboard. Click the experiment to see the history of all ongoing and previous pipeline executions of the same name and compare their run durations and status.
+
+In the `Scheduled` tab you're able to view runs of the pipeline according to a predefined schedule such as daily or according to a Cron statement.
+
+
+[TIP]
+Although Elyra Editor allows us to make more complicated pipelines, this conclude the section. +
+If you want to experiment with pipelines with more nodes, see xref:09_pipelines_elyra_2.adoc#installation[elyra pipeline with two nodes] example.
+
+Let's move on to the next section 🧑‍🚀

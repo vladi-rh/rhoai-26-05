@@ -1,6 +1,8 @@
 # Introduction to Elyra Pipelines
 
-In this section, we learn about elyra pipelines. Elyra pipelines are a way to orchestrate and manage machine learning workflows. They provide a structured approach to defining and executing tasks in a sequential manner. Elyra pipelines can be created using a visual editor, making it easy for users to design and customize their workflows.
+In this section, we learn about elyra pipelines. Elyra pipelines are a way to orchestrate and manage machine learning workflows. +
+They provide a structured approach to defining and executing tasks in a sequential manner. +
+Elyra pipelines can be created using a visual editor, making it easy for users to design and customize their workflows.
 
 ## Elyra Runtime Configuration in Jupyter Notebooks
 
@@ -13,21 +15,23 @@ The runtime configuration is included and is pre-configured for submitting pipel
  
 == Creating a Data Science Pipeline with Elyra
 
-. Create a new directory named `data` in the root folder and upload the following files (test.csv, train.csv,validate.csv) You can download the file by clicking the link below: 
+. Create a new directory named `data` in the root folder and upload the following files (test.csv, train.csv,validate.csv) +
+You can download these files by clicking the link below: 
 +
-https://github.com/rh-aiservices-bu/fraud-detection/blob/main/data/test.csv[Download test.csv]
+* https://github.com/rh-aiservices-bu/fraud-detection/blob/main/data/test.csv[test.csv]
 +
-https://github.com/rh-aiservices-bu/fraud-detection/blob/main/data/train.csv[Download train.csv]
+* https://github.com/rh-aiservices-bu/fraud-detection/blob/main/data/train.csv[train.csv]
 +
-https://github.com/rh-aiservices-bu/fraud-detection/blob/main/data/validate.csv[Download validate.csv]
+* https://github.com/rh-aiservices-bu/fraud-detection/blob/main/data/validate.csv[validate.csv]
 
 === Create notebook to train a model
 
-. Open the `standard-workbench` in `parasol-insurance` project. Click on Launcher and create a new python notebook `1.train_model.ipynb`
+. Open your existing workbench in `userX-workshop` AI project. + 
+Click on Launcher and create a new python notebook `1.train_model.ipynb`
 +
 
 [.bordershadow]
-image::notebook.png[]
+image::07_pipelines_elyra_notebook.png[]
 
 +
 
@@ -368,141 +372,20 @@ def list_objects(prefix):
 ----
 + 
 
+.Did you face some issues 🐉 ? Here you can take a look at solution
 [%collapsible]
-.Updated custom notebook.yaml to avoid storage related errors.
+====
+Probably you got an exception stating that one or more variables are missing. +
+You can either stop the workbench and add missing environment variables or add them directly in the notebook to move on faster.
 
-[source,yaml]
+[source,python]
 ----
-apiVersion: kubeflow.org/v1
-kind: Notebook
-metadata:
-  annotations:
-    notebooks.opendatahub.io/inject-oauth: 'true'
-    opendatahub.io/image-display-name: Datascience notebook
-    notebooks.opendatahub.io/oauth-logout-url: ''
-    opendatahub.io/accelerator-name: ''
-    openshift.io/description: ''
-    openshift.io/display-name: custom-workbench
-    notebooks.opendatahub.io/last-image-selection: 'custom-notebook:latest'
-    argocd.argoproj.io/sync-options: ServerSideApply=true
-  name: custom-workbench
-  namespace: parasol-insurance
-spec:
-  template:
-    spec:
-      affinity: {}
-      containers:
-        - name: custom-workbench
-          image: 'image-registry.openshift-image-registry.svc:5000/redhat-ods-applications/custom-notebook:latest'
-          resources:
-            limits:
-              cpu: '2'
-              memory: 8Gi
-            requests:
-              cpu: '1'
-              memory: 8Gi
-          readinessProbe:
-            failureThreshold: 3
-            httpGet:
-              path: /notebook/parasol-insurance/custom-workbench/api
-              port: notebook-port
-              scheme: HTTP
-            initialDelaySeconds: 10
-            periodSeconds: 5
-            successThreshold: 1
-            timeoutSeconds: 1
-          livenessProbe:
-            failureThreshold: 3
-            httpGet:
-              path: /notebook/parasol-insurance/custom-workbench/api
-              port: notebook-port
-              scheme: HTTP
-            initialDelaySeconds: 10
-            periodSeconds: 5
-            successThreshold: 1
-            timeoutSeconds: 1
-          env:
-            - name: NOTEBOOK_ARGS
-              value: |-
-                --ServerApp.port=8888
-                --ServerApp.token=''
-                --ServerApp.password=''
-                --ServerApp.base_url=/notebook/parasol-insurance/custom-workbench
-                --ServerApp.quit_button=False
-                --ServerApp.tornado_settings={"user":"user1","hub_host":"","hub_prefix":"/projects/parasol-insurance"}
-            - name: JUPYTER_IMAGE
-              value: 'image-registry.openshift-image-registry.svc:5000/redhat-ods-applications/custom-notebook:latest'
-            - name: PIPELINES_SSL_SA_CERTS	
-              value: /etc/pki/tls/custom-certs/ca-bundle.crt	
-            - name: GIT_SSL_CAINFO	
-              value: /etc/pki/tls/custom-certs/ca-bundle.crt	
-            - name: PIP_CERT	
-              value: /etc/pki/tls/custom-certs/ca-bundle.crt	
-            - name: REQUESTS_CA_BUNDLE	
-              value: /etc/pki/tls/custom-certs/ca-bundle.crt	
-            - name: SSL_CERT_FILE	
-              value: /etc/pki/tls/custom-certs/ca-bundle.crt
-          ports:
-            - containerPort: 8888
-              name: notebook-port
-              protocol: TCP
-          imagePullPolicy: Always
-          volumeMounts:
-            - mountPath: /opt/app-root/src
-              name: custom-workbench
-            - mountPath: /dev/shm
-              name: shm
-            - mountPath: /etc/pki/tls/custom-certs/ca-bundle.crt	
-              name: trusted-ca	
-              readOnly: true	
-              subPath: ca-bundle.crt
-          workingDir: /opt/app-root/src
-          envFrom:
-            - secretRef:
-                name: minio-data-connection
-      enableServiceLinks: false
-      serviceAccountName: custom-workbench
-      volumes:
-        - name: custom-workbench
-          persistentVolumeClaim:
-            claimName: custom-workbench
-        - emptyDir:
-            medium: Memory
-          name: shm
-        - configMap:	
-            items:	
-              - key: ca-bundle.crt	
-                path: ca-bundle.crt	
-            name: workbench-trusted-ca-bundle	
-            optional: true	
-          name: trusted-ca
+region_name = 'wonderland'
+bucket_name = 'models'
 ----
 + 
 
-[%collapsible]
-[source, yaml]
-.Updated minio-data-connection.yaml to avoid storage related errors.
-
-----
-kind: Secret
-apiVersion: v1
-metadata:
-  name: minio-data-connection
-  labels:
-    opendatahub.io/dashboard: 'true'
-    opendatahub.io/managed: 'true'
-  annotations:
-    opendatahub.io/connection-type: s3
-    openshift.io/display-name: minio-data-connection
-    argocd.argoproj.io/sync-wave: "-100"
-stringData:
-  AWS_ACCESS_KEY_ID: minio
-  AWS_S3_ENDPOINT: http://minio.object-datastore.svc.cluster.local:9000
-  AWS_SECRET_ACCESS_KEY: minio123
-  AWS_DEFAULT_REGION: east-1
-  AWS_S3_BUCKET: pipelines
-type: Opaque
-----
+====
 
 . Add a new cell and add the following content:
 
@@ -551,7 +434,7 @@ list_objects("models")
 +
 
 [.bordershadow]
-image::pipeline_editor.png[] 
+image::07_pipelines_elyra_editor.png[] 
 
 + 
 
@@ -562,18 +445,19 @@ image::pipeline_editor.png[]
 
 +
 
-. Update the pipeline parameters for node 1.train_model.
+. In case of the `Runtime image required` error, select the node and set the mandatory parameter `Runtime image` to _"Data Science - Python 3.12"_ for both nodes.
++
+[.bordershadow]
+image::07_pipelines_elyra_runtime.png[] 
+
++
+
+. Update the pipeline parameters for node `1.train_model`.
 
 +
 [.bordershadow]
 image::pipeline_parameters.png[]
 +
-
-. Update the runtime image for both nodes to `Datascience with Python 3.11 (UBI9)` created in the previous section.
-
-+
-[.bordershadow]
-image::elyra_runtime.png[]
 
 . Update S3 storage `Kubernetes Secrets` for node 2.save_model 
 +
