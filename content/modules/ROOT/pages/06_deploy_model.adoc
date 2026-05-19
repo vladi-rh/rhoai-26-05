@@ -78,6 +78,16 @@ image::06_model_advanced_settings.png[]
 Deployment strategy can remain as `Rolling update` and we are ready to confirm our choices in the last step and finally deploy the model.
 
 Soon enough, we will see our model is getting `Started` status.
+
+Wait a sec?! 🐛 or 🐉
+It failed?! +
+Do you know how to check the logs? +
+Did you check MinIO UI to see the content of the models bucket? 
+Hmmm.. to which bucket did we upload model in a previous exercise? 
+Do you try to deploy the model using existing connection from the same bucket? 
+
+Let's quickly go back to the previous exercise and upload to the models bucket (previously `my-models`) instead. 
+
 [.bordershadow]
 image::06_model_running.png[]
 
